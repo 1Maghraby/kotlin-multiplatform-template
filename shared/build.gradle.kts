@@ -7,6 +7,28 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+val networkBaseUrl = "https://api.example.com"
+val generatedNetworkConfigDir = layout.buildDirectory.dir("generated/networkConfig/commonMain/kotlin")
+val generateNetworkConfig by tasks.registering {
+    inputs.property("networkBaseUrl", networkBaseUrl)
+    outputs.dir(generatedNetworkConfigDir)
+
+    doLast {
+        val configFile = generatedNetworkConfigDir
+            .get()
+            .file("com/maghraby/kmp_template/di/NetworkConfig.kt")
+            .asFile
+        configFile.parentFile.mkdirs()
+        configFile.writeText(
+            """
+            package com.maghraby.kmp_template.di
+
+            internal const val NETWORK_BASE_URL = "$networkBaseUrl"
+            """.trimIndent()
+        )
+    }
+}
+
 kotlin {
     listOf(
         iosArm64(),
@@ -37,6 +59,9 @@ kotlin {
        }
     }
     sourceSets {
+        commonMain {
+            kotlin.srcDir(generateNetworkConfig)
+        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
@@ -54,6 +79,7 @@ kotlin {
             implementation(libs.navigation3.ui)
             implementation(libs.kotlinx.serialization.core)
             implementation(project(":core:navigation"))
+            implementation(project(":core:network"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

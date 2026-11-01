@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.maghraby.kmp_template.di.appModule
+import com.maghraby.kmp_template.di.networkModule
 import com.maghraby.kmp_template.feature_home.HomeDestination
 import com.maghraby.kmp_template.feature_home.HomeNavigationFeature
 import com.maghraby.kmp_template.navigation.AppNavigation
@@ -33,7 +34,7 @@ private val navigationFeatures = listOf(HomeNavigationFeature)
 fun App() {
     KoinApplication(
         configuration = koinConfiguration {
-            modules(appModule)
+            modules(appModule, networkModule)
         }
     ) {
         val navigator = rememberAppNavigator(
